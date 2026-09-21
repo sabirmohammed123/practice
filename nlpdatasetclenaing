@@ -1,0 +1,323 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyN1F+53+9OzmISmdRvIA8z/",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/sabirmohammed123/practice/blob/main/nlpdatasetclenaing\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "# Load your Excel file\n",
+        "df = pd.read_excel('/content/route.xlsx')"
+      ],
+      "metadata": {
+        "id": "N03pOTmZmoLo"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Convert route_id and route_short_name to string format\n",
+        "df['route_id'] = df['route_id'].astype(str).str.strip()\n",
+        "df['route_short_name'] = df['route_short_name'].astype(str).str.strip()\n",
+        "df['agency_id'] = df['agency_id'].astype(str).str.strip().str.upper()"
+      ],
+      "metadata": {
+        "id": "kE-inMVNmoYl"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df['route_type'] = pd.to_numeric(df['route_type'], errors='coerce').fillna(3).astype(int)"
+      ],
+      "metadata": {
+        "id": "N7sBLRY_puqd"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df['nlp_route_description'] = (\n",
+        "    \"TGSRTC Bus Route \" + df['route_short_name'] + \" (Route ID: \" + df['route_id'] + \")\"\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "pT9rRWfipuvK"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df.to_excel('tgsrtc_cleaned.xlsx', index=False)"
+      ],
+      "metadata": {
+        "id": "K3SZe2gnp8U9"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Verify clean data types and sample output\n",
+        "print(df[['route_id', 'route_short_name', 'agency_id', 'route_type', 'nlp_route_description']])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "prnZONEPqbUr",
+        "outputId": "5366fb8b-ab01-4369-c54a-7a5e3a543c16"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "      route_id route_short_name agency_id  route_type  \\\n",
+            "0            1                1    TGSRTC           3   \n",
+            "1           10               10    TGSRTC           3   \n",
+            "2         100B             100B    TGSRTC           3   \n",
+            "3       100B/L           100B/L    TGSRTC           3   \n",
+            "4       100B/S           100B/S    TGSRTC           3   \n",
+            "...        ...              ...       ...         ...   \n",
+            "1496        AC               AC    TGSRTC           3   \n",
+            "1497        AJ               AJ    TGSRTC           3   \n",
+            "1498        AK               AK    TGSRTC           3   \n",
+            "1499        AL               AL    TGSRTC           3   \n",
+            "1500  WONDERLA         WONDERLA    TGSRTC           3   \n",
+            "\n",
+            "                               nlp_route_description  \n",
+            "0                   TGSRTC Bus Route 1 (Route ID: 1)  \n",
+            "1                 TGSRTC Bus Route 10 (Route ID: 10)  \n",
+            "2             TGSRTC Bus Route 100B (Route ID: 100B)  \n",
+            "3         TGSRTC Bus Route 100B/L (Route ID: 100B/L)  \n",
+            "4         TGSRTC Bus Route 100B/S (Route ID: 100B/S)  \n",
+            "...                                              ...  \n",
+            "1496              TGSRTC Bus Route AC (Route ID: AC)  \n",
+            "1497              TGSRTC Bus Route AJ (Route ID: AJ)  \n",
+            "1498              TGSRTC Bus Route AK (Route ID: AK)  \n",
+            "1499              TGSRTC Bus Route AL (Route ID: AL)  \n",
+            "1500  TGSRTC Bus Route WONDERLA (Route ID: WONDERLA)  \n",
+            "\n",
+            "[1501 rows x 5 columns]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "'''next dataset'''\n",
+        "\n",
+        "\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "\n",
+        "# Load your stops file (CSV or Excel)\n",
+        "df = pd.read_excel('/content/stop.xlsx')  # Or pd.read_csv('stops.txt')\n",
+        "\n",
+        "# Drop missing critical fields and exact duplicates\n",
+        "df = df.dropna(subset=['stop_id', 'stop_name', 'stop_lat', 'stop_lon'])\n",
+        "df = df.drop_duplicates(subset=['stop_id'])"
+      ],
+      "metadata": {
+        "id": "-nNhSGxMsnz9"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Convert to float\n",
+        "df['stop_lat'] = pd.to_numeric(df['stop_lat'], errors='coerce')\n",
+        "df['stop_lon'] = pd.to_numeric(df['stop_lon'], errors='coerce')\n",
+        "\n",
+        "# Filter for valid latitude/longitude bounds in Telangana State\n",
+        "df = df[(df['stop_lat'].between(15.0, 20.0)) & (df['stop_lon'].between(77.0, 81.0))]"
+      ],
+      "metadata": {
+        "id": "PECNqlhasn2e"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Strip extra whitespace and standardize text columns\n",
+        "text_cols = ['stop_id', 'stop_name', 'zone_id', 'stop_desc']\n",
+        "for col in text_cols:\n",
+        "    df[col] = df[col].astype(str).str.strip()\n",
+        "\n",
+        "# Clean stop_desc abbreviations (e.g., expand 'twd' to 'towards')\n",
+        "df['stop_desc_clean'] = df['stop_desc'].str.replace(r'\\btwd\\b', 'towards', case=False, regex=True)\n",
+        "df['stop_desc_clean'] = df['stop_desc_clean'].str.title()"
+      ],
+      "metadata": {
+        "id": "U9C53K9Jsn5Q"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "abbreviations = {\n",
+        "    r'\\bCBS\\b': 'Central Bus Station',\n",
+        "    r'\\bMGBS\\b': 'Mahatma Gandhi Bus Station',\n",
+        "    r'\\bJBS\\b': 'Jubilee Bus Station',\n",
+        "    r'\\bHNK\\b': 'Hanamkonda',\n",
+        "    r'\\bKZP\\b': 'Kazipet',\n",
+        "    r'\\bWGL\\b': 'Warangal'\n",
+        "}\n",
+        "\n",
+        "for abbr, full_text in abbreviations.items():\n",
+        "    df['stop_name'] = df['stop_name'].str.replace(abbr, full_text, regex=True)\n",
+        "    df['stop_desc_clean'] = df['stop_desc_clean'].str.replace(abbr, full_text, regex=True)"
+      ],
+      "metadata": {
+        "id": "o-sS-9vksn8v"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df['nlp_stop_description'] = (\n",
+        "    \"Bus stop \" + df['stop_name'] +\n",
+        "    \" located at (\" + df['stop_lat'].astype(str) + \", \" + df['stop_lon'].astype(str) +\n",
+        "    \"), description: \" + df['stop_desc_clean']\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "HlpMSg4HuUL8"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Save clean dataset\n",
+        "output_filename = 'stops_cleaned.xlsx'\n",
+        "df.to_excel(output_filename, index=False)\n",
+        "\n",
+        "# Trigger download if using Google Colab\n",
+        "from google.colab import files\n",
+        "files.download(output_filename)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 17
+        },
+        "id": "o_PJDsUauUPh",
+        "outputId": "ac6b8189-14e0-41da-be7e-3aaabddb124c"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.Javascript object>"
+            ],
+            "application/javascript": [
+              "\n",
+              "    async function download(id, filename, size) {\n",
+              "      if (!google.colab.kernel.accessAllowed) {\n",
+              "        return;\n",
+              "      }\n",
+              "      const div = document.createElement('div');\n",
+              "      const label = document.createElement('label');\n",
+              "      label.textContent = `Downloading \"${filename}\": `;\n",
+              "      div.appendChild(label);\n",
+              "      const progress = document.createElement('progress');\n",
+              "      progress.max = size;\n",
+              "      div.appendChild(progress);\n",
+              "      document.body.appendChild(div);\n",
+              "\n",
+              "      const buffers = [];\n",
+              "      let downloaded = 0;\n",
+              "\n",
+              "      const channel = await google.colab.kernel.comms.open(id);\n",
+              "      // Send a message to notify the kernel that we're ready.\n",
+              "      channel.send({})\n",
+              "\n",
+              "      for await (const message of channel.messages) {\n",
+              "        // Send a message to notify the kernel that we're ready.\n",
+              "        channel.send({})\n",
+              "        if (message.buffers) {\n",
+              "          for (const buffer of message.buffers) {\n",
+              "            buffers.push(buffer);\n",
+              "            downloaded += buffer.byteLength;\n",
+              "            progress.value = downloaded;\n",
+              "          }\n",
+              "        }\n",
+              "      }\n",
+              "      const blob = new Blob(buffers, {type: 'application/binary'});\n",
+              "      const a = document.createElement('a');\n",
+              "      a.href = window.URL.createObjectURL(blob);\n",
+              "      a.download = filename;\n",
+              "      div.appendChild(a);\n",
+              "      a.click();\n",
+              "      div.remove();\n",
+              "    }\n",
+              "  "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.Javascript object>"
+            ],
+            "application/javascript": [
+              "download(\"download_3686094a-8b07-4773-9ff0-c9b42f162399\", \"stops_cleaned.xlsx\", 447511)"
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    }
+  ]
+}
